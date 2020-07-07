@@ -1,12 +1,12 @@
-const { bindActionCreators } = require("redux");
+// const { bindActionCreators } = require("redux");
 
 const initialState = {
   books: [],
 };
 
-const reduser = (state = initialState, action) => {
+const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case "BOOK_LOADED":
+    case "BOOKS_LOADED":
       return {
         books: action.payload,
       };
@@ -15,4 +15,4 @@ const reduser = (state = initialState, action) => {
   }
 };
 
-export default reduser;
+export default reducer;

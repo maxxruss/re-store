@@ -1,9 +1,12 @@
 import React from "react";
+import BookList from "../book-list";
+import ShoppingCardTable from "../shopping-card-table";
 
 const HomePage = () => {
   return (
     <div>
-      <h3>Card page</h3>
+      <BookList />
+      <ShoppingCardTable />
     </div>
   );
 };
