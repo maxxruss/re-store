@@ -47,16 +47,16 @@ export const allBooksRemovedFromCart = (bookId) => {
   };
 };
 
-const fetchBooksOld = (dispatch, bookstoreService) => () => {
-  dispatch(booksRequested());
-  bookstoreService
-    .getBooks()
-    .then((data) => {
-      //2. Dispatch action to store - insert new book
-      dispatch(booksLoaded(data));
-    })
-    .catch((err) => dispatch(booksError(err)));
-};
+// const fetchBooksOld = (dispatch, bookstoreService) => () => {
+//   dispatch(booksRequested());
+//   bookstoreService
+//     .getBooks()
+//     .then((data) => {
+//       //2. Dispatch action to store - insert new book
+//       dispatch(booksLoaded(data));
+//     })
+//     .catch((err) => dispatch(booksError(err)));
+// };
 
 const fetchBooks = (bookstoreService) => () => (dispatch) => {
   dispatch(booksRequested());
