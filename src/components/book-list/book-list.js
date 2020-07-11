@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import BookListItem from "../book-list-item";
 import { connect } from "react-redux";
 import { withBookstoreService } from "../hoc";
-// import { bindActionCreators } from "redux";
 import { fetchBooks, onAddedToCard } from "../../actions";
 import compose from "../../utils";
 import Spinner from "../spinner";
 import ErrorIndicator from "../error-indicator";
+import { bindActionCreators } from "redux";
 
 const Booklist = ({ books, onAddedToCard }) => {
   return (
@@ -55,11 +55,15 @@ const mapStateToProps = ({ bookList: { books, loading, error } }) => {
 //функция описывает, какие действия мы хотим передать в redux store (прямой доступ к dispatch).
 //mapDispatchToProps может быть функцией или объектом.
 //Если это объект то он передается в bindActionCreators
+//bindActionCreators вызывает dispatch после вызова action
 const mapDispatchToProps = (dispatch, { bookstoreService }) => {
-  return {
-    fetchBooks: fetchBooks(dispatch, bookstoreService),
-    onAddedToCard: (id) => dispatch(onAddedToCard(id)),
-  };
+  return bindActionCreators(
+    {
+      fetchBooks: fetchBooks(bookstoreService),
+      onAddedToCard,
+    },
+    dispatch
+  );
 };
 
 //Начинаем со store, где изначальный state = []
