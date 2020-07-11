@@ -1,4 +1,10 @@
 import React from "react";
+import { connect } from "react-redux";
+import {
+  onAddedToCard,
+  bookRemovedFromCart,
+  allBooksRemovedFromCart,
+} from "../../actions";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,66 +16,99 @@ import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
-import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from "@material-ui/icons/RemoveCircleOutlineOutlined";
 
 const useStyles = makeStyles({
   root: {
     display: "flex",
   },
   actionsWrap: {
-    display: 'flex'
+    display: "flex",
   },
   action: {
-    float: 'right'
+    float: "right",
+  },
+  total: {
+    textAlign: "right",
+    fontSize: "1.3rem",
+    marginRight: "10px",
+    marginTop: "10px",
   },
 });
 
-const ShoppingCardTable = () => {
+const ShoppingCardTable = ({
+  items,
+  total,
+  onIncrease,
+  onDecrease,
+  onDelete,
+}) => {
   const classes = useStyles();
-  function createData(number, title, count, price, action) {
-    return { number, title, count, price, action };
-  }
-
-  const rows = [createData(1, "Production-Ready Microservices", 2, 40, "add")];
+  const renderRow = (item, idx) => {
+    const { id, title, count, total } = item;
+    return (
+      <TableRow key={id}>
+        <TableCell component="th" scope="row">
+          {idx + 1}
+        </TableCell>
+        <TableCell align="left">{title}</TableCell>
+        <TableCell align="right">{count}</TableCell>
+        <TableCell align="right">${total}</TableCell>
+        <TableCell className={classes.actionsWrap} align="right">
+          <IconButton className={classes.action} onClick={() => onDelete(id)}>
+            <DeleteOutlineOutlinedIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            color="secondary"
+            className={classes.action}
+            onClick={() => onIncrease(id)}
+          >
+            <AddCircleOutlineOutlinedIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            color="primary"
+            className={classes.action}
+            onClick={() => onDecrease(id)}
+          >
+            <RemoveCircleOutlineOutlinedIcon fontSize="small" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>#</TableCell>
-            <TableCell align="left">Title</TableCell>
-            <TableCell align="right">Count</TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.number}>
-              <TableCell component="th" scope="row">
-                {row.number}
-              </TableCell>
-              <TableCell align="left">{row.title}</TableCell>
-              <TableCell align="right">{row.count}</TableCell>
-              <TableCell align="right">{row.price}</TableCell>
-              <TableCell className={classes.actionsWrap} align="right">
-                <IconButton className={classes.action}>
-                  <DeleteOutlineOutlinedIcon fontSize="small" />
-                </IconButton>
-                <IconButton color="secondary" className={classes.action}>
-                  <AddCircleOutlineOutlinedIcon fontSize="small" />
-                </IconButton>
-                <IconButton  color="primary" className={classes.action}>
-                  <RemoveCircleOutlineOutlinedIcon fontSize="small" />
-                </IconButton>
-              </TableCell>
+    <div>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>#</TableCell>
+              <TableCell align="left">Title</TableCell>
+              <TableCell align="right">Count</TableCell>
+              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Action</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>{items.map((row, id) => renderRow(row, id))}</TableBody>
+        </Table>
+      </TableContainer>
+      <div className={classes.total}>Total: ${total}</div>
+    </div>
   );
 };
 
-export default ShoppingCardTable;
+const mapStateToProps = ({ shoppingCart: { cartItems, orderTotal } }) => {
+  return {
+    items: cartItems,
+    total: orderTotal,
+  };
+};
+
+const mapDispatchToProps = {
+  onIncrease: onAddedToCard,
+  onDecrease: bookRemovedFromCart,
+  onDelete: allBooksRemovedFromCart,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShoppingCardTable);

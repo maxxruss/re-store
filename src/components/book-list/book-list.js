@@ -2,47 +2,64 @@ import React, { Component } from "react";
 import BookListItem from "../book-list-item";
 import { connect } from "react-redux";
 import { withBookstoreService } from "../hoc";
-import { bindActionCreators } from "redux";
-import { booksLoaded } from "../../actions";
+// import { bindActionCreators } from "redux";
+import { fetchBooks, onAddedToCard } from "../../actions";
 import compose from "../../utils";
+import Spinner from "../spinner";
+import ErrorIndicator from "../error-indicator";
 
-class BookList extends Component {
+const Booklist = ({ books, onAddedToCard }) => {
+  return (
+    <div>
+      {books.map((book) => {
+        return (
+          <div key={book.id}>
+            <BookListItem
+              book={book}
+              onAddedToCard={() => onAddedToCard(book.id)}
+            ></BookListItem>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+//*Container - code convention, так называется обертка для BookList
+class BookListContainer extends Component {
   componentDidMount() {
+    this.props.fetchBooks();
     //1. Reseve data from store
-    const { bookstoreService } = this.props;
-    const data = bookstoreService.getBooks();
-
-    //2. Dispatch action to store - insert new book
-    this.props.booksLoaded(data);
+    // const {
+    //   bookstoreService,
+    //   booksLoaded,
+    //   booksRequested,
+    //   booksError,
+    // } = this.props;
+    // booksRequested();
   }
 
   render() {
-    const { books } = this.props;
-
-    return (
-      <div>
-        {books.map((book) => {
-          return (
-            <div key={book.id}>
-              <BookListItem book={book}></BookListItem>
-            </div>
-          );
-        })}
-      </div>
-    );
+    const { books, loading, error, onAddedToCard } = this.props;
+    if (loading) return <Spinner />;
+    if (error) return <ErrorIndicator />;
+    return <Booklist books={books} onAddedToCard={onAddedToCard} />;
   }
 }
 
 //функция описывает, какие данные мы хоиим получить из redux store
-const mapStateToProps = ({ books }) => {
-  return { books };
+const mapStateToProps = ({ bookList: { books, loading, error } }) => {
+  return { books, loading, error };
 };
 
-//функция описывает, какие действия мы хотим передать в redux store. mapDispatchToProps может быть функцией или объектом. Если это объект
-//то он передается в bindActionCreators
-const mapDispatchToProps = (dispatch) => {
-  //bindActionCreators - создает нужное действие и передает его в dispatch
-  return bindActionCreators({ booksLoaded }, dispatch);
+//функция описывает, какие действия мы хотим передать в redux store (прямой доступ к dispatch).
+//mapDispatchToProps может быть функцией или объектом.
+//Если это объект то он передается в bindActionCreators
+const mapDispatchToProps = (dispatch, { bookstoreService }) => {
+  return {
+    fetchBooks: fetchBooks(dispatch, bookstoreService),
+    onAddedToCard: (id) => dispatch(onAddedToCard(id)),
+  };
 };
 
 //Начинаем со store, где изначальный state = []
@@ -53,4 +70,4 @@ const mapDispatchToProps = (dispatch) => {
 export default compose(
   withBookstoreService(),
   connect(mapStateToProps, mapDispatchToProps)
-)(BookList);
+)(BookListContainer);

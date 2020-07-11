@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   }
 });
 
-const BookListItem = ({ book }) => {
+const BookListItem = ({ book, onAddedToCard }) => {
   const classes = useStyles();
   const { title, author, price, coverImage } = book;
   return (
@@ -40,7 +40,7 @@ const BookListItem = ({ book }) => {
         <a href='#' className={classes.title}>{title}</a>
         <div>{author}</div>
         <div className={classes.price}>${price}</div>
-        <Button variant="contained" color="primary">Add to card</Button>
+        <Button variant="contained" color="primary" onClick={onAddedToCard}>Add to card</Button>
       </div>
     </div>
   );
