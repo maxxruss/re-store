@@ -47,7 +47,7 @@ class BookListContainer extends Component {
   }
 }
 
-//функция описывает, какие данные мы хоиим получить из redux store
+//функция описывает, какие данные мы хоиим получить из redux store. Берем нужные переменные из store и передаем их для reduser
 const mapStateToProps = ({ bookList: { books, loading, error } }) => {
   return { books, loading, error };
 };
