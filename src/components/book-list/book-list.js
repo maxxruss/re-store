@@ -48,6 +48,7 @@ class BookListContainer extends Component {
 }
 
 //функция описывает, какие данные мы хоиим получить из redux store. Берем нужные переменные из store и передаем их для reduser
+//Первым аргументом принимает state
 const mapStateToProps = ({ bookList: { books, loading, error } }) => {
   return { books, loading, error };
 };
@@ -56,6 +57,7 @@ const mapStateToProps = ({ bookList: { books, loading, error } }) => {
 //mapDispatchToProps может быть функцией или объектом.
 //Если это объект то он передается в bindActionCreators
 //bindActionCreators вызывает dispatch после вызова action
+//Первым аргументом принимает dispatch (будет присовен ему по умолчанию)
 const mapDispatchToProps = (dispatch, { bookstoreService }) => {
   return bindActionCreators(
     {
